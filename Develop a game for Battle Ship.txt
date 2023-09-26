@@ -1,0 +1,252 @@
+//Develop a game for Battle Ship
+
+package miniprojects;
+import java.util.Scanner;
+public class BattleShips {
+	static int playerShips,computerShips;
+	//static array to store the ships coordinates
+	static String grid[][]=new String[10][10];
+	//static variable to store player's score
+	static int playerscore=5;
+	//static variable to store computer's score
+	static int computerscore=5;
+
+	
+//First step: To Create one Empty Ocean
+	
+class CreateEmptyOcean
+{
+	//to Print the ocean
+	static void print()
+	{
+		//to print 0123456789
+		
+		System.out.print(" ");
+		for(int i=0;i<10;i++)
+		{
+			System.out.print(i);
+		}
+		System.out.println();
+		
+		//to print empty matrix format
+		
+		for(int i=0;i<10;i++)
+		{
+			System.out.print(i+" |");
+			for(int j=0;j<10;j++)
+			{
+				grid[i][j]=" ";
+				System.out.print(grid[i][j]);
+			}
+			System.out.println("| "+i);
+		}
+		//to print0123456789
+		System.out.println(" ");
+		for(int i=0;i<10;i++)
+		{
+			System.out.print(i);
+		}
+		System.out.println();
+		
+	}
+}
+//Step-2:To Deploy player Ships
+
+public static void DeployPlayerShips()
+{
+	Scanner sc=new Scanner(System.in);
+	int x,y;
+
+		System.out.print("Deploy Your ships");
+		BattleShips.playerShips = 5;
+		for (int i = 1; i <= BattleShips.playerShips; )
+	
+		{
+			//take X Coordinates from User
+			System.out.print("Enter X Coordinate of your "+ i +" Ship:");
+			x=sc.nextInt();
+			//take Y coordinates from User
+			System.out.print("Enter Y Coordinate of your "+ i +" Ship:");
+			y=sc.nextInt();
+			
+			//deploy players ship with'@' Symbol
+			if((x >= 0 && x < 10)&&(y >= 0 && y < 10)&&(grid[x][y]==" "))
+			{
+				grid[x][y]="@";
+				i++;
+			}
+			else if((x>=0 && x<10)&&(y>=0 && y<10)&& grid[x][y]=="@")
+			{
+				System.out.println("You can't two or more Ships on the same location");
+			}
+			else if((x<0 || x>=10)||(y<0 || y>=10))
+			{
+				System.out.println(" You Can't Place Ships Outside the 10 by 10 grid");
+			}
+			
+		}
+	
+	printOceanMap();
+}
+//Step-3:To deploy Computer Ships
+public static void DeployComputerShips()
+{
+
+		  System.out.println("Computer is Deploying Ships");
+			BattleShips.computerShips = 5;
+			for (int i=1; i<=BattleShips.computerShips;)
+			{
+				int x=(int)(Math.random()*10);
+				int y=(int)(Math.random()*10);
+				if((x>=0 && x<10) && (y>=0 && y<10) && (grid[x][y]==" "))
+				{
+					grid[x][y] ="x";
+					i++;
+				}
+				else if((x>=0 && x<10) && (y>=0 && y<10) && grid[x][y]=="@"||grid[x][y]=="x")
+				{
+					System.out.println("You can't place two or more ships on the same location");
+				}
+				System.out.println("Ship Deployed");
+			}
+			printOceanMap();		
+}
+
+public static void Battle()
+{
+	playerTurn();
+	computerTurn();
+	printOceanMap();
+	System.out.println();
+	System.out.println("Your ships: " + BattleShips.playerShips + " | Computer ships: " + BattleShips.computerShips);
+	System.out.println();
+}
+// Player turn to guess
+public static void playerTurn()
+{
+	System.out.println("\nYOUR TURN");
+	int x,y;
+	do
+	{
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Enter X coordinate: ");
+		x = sc.nextInt();
+		System.out.print("Enter Y coordinate: ");
+		y = sc.nextInt();
+		if ((x>=0 && x<10) && (y>=0 && y<10)) //valid guess
+		{
+			if (grid[x][y]=="x") //if player correctly guessed the computer ship then computer loses ship
+			{
+				System.out.println("Boom! You sunk the ship!");
+				grid[x][y] ="!"; //Hit mark
+				BattleShips.computerShips--;
+			}
+			else if (grid[x][y]=="@") // if player entered coordinates of his own ship
+			{
+				System.out.println("Oh no, you sunk your own ship");
+				grid[x][y]="x";
+				BattleShips.playerShips--;
+				BattleShips.computerShips++;
+			}
+			else if (grid[x][y]==" ") //if no ship on the entered coordinates
+			{
+				System.out.println("Sorry, you missed");
+				grid[x][y]="-";
+			}
+		}
+		else if ((x<0 || x>=10) || (y<0 || y>=10))  //invalid guess
+			System.out.println("You can't place ships outside the grid");
+	}
+	while((x<0 || x>=10) || (y<0 || y>=10));  //keep guessing till valid guess
+}
+// computer turn to guess
+public static void computerTurn()
+{
+	System.out.println("\nCOMPUTER'S TURN");
+	int x, y;
+	do 
+	{
+		x = (int)(Math.random() * 10);
+		y = (int)(Math.random() * 10);
+
+		if ((x>=0 && x<10) && (y>=0 && y<10)) //valid guess
+		{
+			if (grid[x][y]=="@") //if computer guessed coordinates of players ship then player loses
+			{
+				System.out.println("The Computer sunk one of your ships!");
+				grid[x][y] = "x";
+				BattleShips.playerShips--;
+				BattleShips.computerShips++;
+			}
+			else if (grid[x][y] == "x") //if computer guessed coordinates of his own ship
+			{
+				System.out.println("The Computer sunk one of its own ships");
+				grid[x][y] = "!";
+			}
+			else if (grid[x][y] == " ") // if no ship on guessed coordinates
+			{
+				System.out.println("Computer missed");
+               
+			}
+		}
+	}while((x<0 || x>=10) || (y<0 || y>=10));  //keep guessing till valid guess
+}
+public static void gameOver()
+{
+	System.out.println("Your ships: " + BattleShips.playerShips + " | Computer ships: " + BattleShips.computerShips);
+	if(BattleShips.playerShips > 0 && BattleShips.computerShips <= 0)
+		System.out.println("Hooray! You won the battle");
+	else
+		System.out.println("Sorry, you lost the battle");
+	System.out.println();
+}
+public static void printOceanMap()
+{
+	System.out.println();
+	System.out.print("  ");
+	for(int i=0; i<10; i++)
+		System.out.print(i);
+	System.out.println();
+	for(int x=0; x<grid.length; x++)
+	{
+		System.out.print(x + "|");
+
+		for (int y=0; y<grid[x].length; y++){
+			System.out.print(grid[x][y]);
+		}
+
+		System.out.println("|" + x);
+	}
+	System.out.print("  ");
+	for(int i=0; i<10; i++)
+		System.out.print(i);
+	System.out.println();
+}
+
+	public static void main(String[] args) {
+		System.out.println("**** Welcome to Battle Ships game ****");
+		System.out.println("Right now the ship is empty.");
+
+		// create the ocean map
+		CreateEmptyOcean.print();
+		
+	   // deploy the player ship
+		DeployPlayerShips();
+		
+		// deploy the computer ship
+		DeployComputerShips();
+		
+		//For Battle
+			do 
+			{
+				Battle();
+			}
+			while(BattleShips.playerShips != 0 && BattleShips.computerShips != 0);
+				gameOver(); //game over
+	}
+
+}
+
+
+
+
